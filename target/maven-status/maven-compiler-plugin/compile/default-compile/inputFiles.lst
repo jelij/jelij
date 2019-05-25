@@ -1,0 +1,9 @@
+/home/ttmdear/mnt/handy/workspace/jelij/src/main/java/com/jelij/adapters/commands/sql/Select.java
+/home/ttmdear/mnt/handy/workspace/jelij/src/main/java/com/jelij/adapters/Adapter.java
+/home/ttmdear/mnt/handy/workspace/jelij/src/main/java/com/jelij/adapters/commands/Command.java
+/home/ttmdear/mnt/handy/workspace/jelij/src/main/java/com/jelij/adapters/commands/sql/WhereDelegatorInterface.java
+/home/ttmdear/mnt/handy/workspace/jelij/src/main/java/com/jelij/adapters/AdapterInterface.java
+/home/ttmdear/mnt/handy/workspace/jelij/src/main/java/com/jelij/adapters/commands/Built.java
+/home/ttmdear/mnt/handy/workspace/jelij/src/main/java/com/jelij/adapters/mysql/Adapter.java
+/home/ttmdear/mnt/handy/workspace/jelij/src/main/java/com/jelij/adapters/commands/CommandInterface.java
+/home/ttmdear/mnt/handy/workspace/jelij/src/main/java/com/jelij/adapters/commands/sql/Where.java
