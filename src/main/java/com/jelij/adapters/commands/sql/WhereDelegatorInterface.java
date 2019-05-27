@@ -36,4 +36,7 @@ public interface WhereDelegatorInterface<T> {
     T exists(CommandInterface value);
     T notExists(CommandInterface value);
     T expresion(Expresion value);
+
+    T or(Where[] value);
+    T and(Where[] value);
 }

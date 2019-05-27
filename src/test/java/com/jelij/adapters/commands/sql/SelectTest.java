@@ -570,4 +570,62 @@ class SelectTest extends TestCase {
         assertEquals("1", result.getString("id"));
         assertEquals("Samoa", result.getString("country"));
     }
+
+    @Test
+    void or() throws SQLException, ClassNotFoundException {
+        AdapterInterface adapter = this.adapter("bookshop");
+
+        Select select = new Select();
+
+        select.from("users u");
+        select.column("u.id");
+        select.column("u.firstName");
+        select.or(new Where[]{
+                new Where(){{
+                    equal("u.ip", "39.32.246.221");
+                }},
+                new Where(){{
+                    equal("u.countryId", "147");
+                }},
+        });
+
+        ResultSet result = adapter.fetch(select);
+
+        int count = this.count(result);
+
+        result.next();
+
+        assertEquals(27, count);
+        // assertEquals("1", result.getString("id"));
+        // assertEquals("Samoa", result.getString("country"));
+    }
+
+    @Test
+    void and() throws SQLException, ClassNotFoundException {
+        AdapterInterface adapter = this.adapter("bookshop");
+
+        Select select = new Select();
+
+        select.from("users u");
+        select.column("u.id");
+        select.column("u.firstName");
+        select.and(new Where[]{
+                new Where(){{
+                    equal("u.ip", "39.32.246.221");
+                }},
+                new Where(){{
+                    equal("u.countryId", "147");
+                }},
+        });
+
+        ResultSet result = adapter.fetch(select);
+
+        int count = this.count(result);
+
+        result.next();
+
+        assertEquals(1, count);
+        // assertEquals("1", result.getString("id"));
+        // assertEquals("Samoa", result.getString("country"));
+    }
 }

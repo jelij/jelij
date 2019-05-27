@@ -36,6 +36,8 @@ public class Where extends Command {
     private static final String TYPE_EXISTS = "exists";
     private static final String TYPE_NOT_EXISTS = "notExists";
     private static final String TYPE_EXPRESION = "expresion";
+    private static final Object TYPE_OR = "or";
+    private static final Object TYPE_AND = "and";
 
     private static final String OPERATOR_AND = "AND";
     private static final String OPERATOR_OR = "OR";
@@ -395,6 +397,32 @@ public class Where extends Command {
         return this;
     }
 
+    public Where or(Where[] value) {
+        HashMap<String, Object> condition = new HashMap<>();
+
+        condition.put("type", TYPE_OR);
+        condition.put("field", null);
+        condition.put("value", value);
+        condition.put("operator", OPERATOR_AND);
+
+        _conditions.add(condition);
+
+        return this;
+    }
+
+    public Where and(Where[] value) {
+        HashMap<String, Object> condition = new HashMap<>();
+
+        condition.put("type", TYPE_AND);
+        condition.put("field", null);
+        condition.put("value", value);
+        condition.put("operator", OPERATOR_AND);
+
+        _conditions.add(condition);
+
+        return this;
+    }
+
     // public function expr($expr)
     // public function exists($value)
     // public function notExists($value)
@@ -458,12 +486,34 @@ public class Where extends Command {
             } else if (condition.get("value") instanceof CommandInterface) {
                 Built valueBuilt = ((CommandInterface) condition.get("value")).build();
 
-                // value = "(" + valueBuilt.getCommand() + ")";
                 value = valueBuilt.getCommand();
 
                 built.setParams(valueBuilt.getParams());
+            } else if (condition.get("value") instanceof Where[]) {
+                String t = "";
+                String o = null;
 
-                // ...
+                if (type == TYPE_OR) {
+                    o = "or";
+                } else {
+                    o = "and";
+                }
+
+                for(Where where: (Where[]) condition.get("value")) {
+                    Built whereBuilt = where.build();
+
+                    t += "(" + whereBuilt.getCommand() + ") " + o + " ";
+
+                    built.setParams(whereBuilt.getParams());
+                }
+
+                t = t.substring(0, t.length() - o.length() - 2);
+
+                System.out.println("Po usunieciu");
+                System.out.println("----------------");
+                System.out.println(t);
+
+                value = t;
             } else if (condition.get("value") instanceof String[]) {
                 for(String v: (String[]) condition.get("value")) {
                     String placeholder = generateUniquePlaceholder();
@@ -529,6 +579,8 @@ public class Where extends Command {
             } else if (type.equals(TYPE_NOT_EXISTS)) {
                 command += operator + "(" + field + " not exists (" + value + "))";
             } else if (type.equals(TYPE_EXPRESION)) {
+                command += operator + "(" + value + ")";
+            } else if (type.equals(TYPE_OR) || type.equals(TYPE_AND)) {
                 command += operator + "(" + value + ")";
             }
         }

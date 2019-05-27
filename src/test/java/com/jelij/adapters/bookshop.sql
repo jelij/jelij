@@ -2038,11 +2038,13 @@ INSERT INTO `users` (`id`, `firstName`, `lastName`, `email`, `genderId`, `birthD
 	(2001, 'Geneviève', 'Goulborn', 'wgoulborn4o@addtoany.com', 257, '0000-00-00', '91.221.74.139', 60, 577, '616-764-7156');
 
 
+drop table if exists countries;
+
 CREATE TABLE `countries` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=195 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 insert into countries value (null, "Afganistan");
 insert into countries value (null, "Albania");

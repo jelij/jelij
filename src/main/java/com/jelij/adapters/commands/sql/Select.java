@@ -411,6 +411,20 @@ public class Select extends Command implements WhereDelegatorInterface<Select> {
         return this;
     }
 
+    @Override
+    public Select or(Where[] value) {
+        _where.or(value);
+
+        return this;
+    }
+
+    @Override
+    public Select and(Where[] value) {
+        _where.and(value);
+
+        return this;
+    }
+
     public Select leftJoin(String with, String on) {
         return join(JOIN_LEFT, with, on);
     }
