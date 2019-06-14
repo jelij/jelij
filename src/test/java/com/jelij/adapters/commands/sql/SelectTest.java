@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SelectTest extends TestCase {
-
     @Test
     void equal() throws SQLException, ClassNotFoundException {
         AdapterInterface adapter = this.adapter("bookshop");
@@ -46,7 +45,6 @@ class SelectTest extends TestCase {
         select.notEqual("id", "1");
         select.sort(new String[]{"id asc"});
 
-        System.out.println(select.build().command());
         ResultSet result = adapter.fetch(select);
 
         result.next();
@@ -627,5 +625,53 @@ class SelectTest extends TestCase {
         assertEquals(1, count);
         // assertEquals("1", result.getString("id"));
         // assertEquals("Samoa", result.getString("country"));
+    }
+
+    @Test
+    void group() throws SQLException, ClassNotFoundException {
+        AdapterInterface adapter = this.adapter("bookshop");
+
+        Select select = new Select();
+
+        select.from("users u");
+        select.column("u.id");
+        select.column("u.countryId");
+        select.column(new Expresion("count(u.countryId)"), "numberOfRows");
+        // select.group(new String[]{"u.countryId"});
+        select.group(new Expresion[]{new Expresion("u.countryId")});
+
+        ResultSet result = adapter.fetch(select);
+
+        int count = this.count(result);
+
+        result.next();
+
+        assertEquals(155, count);
+        // assertEquals("1", result.getString("id"));
+        // assertEquals("Samoa", result.getString("country"));
+    }
+
+    @Test
+    void groupByFunction() throws SQLException, ClassNotFoundException {
+        AdapterInterface adapter = this.adapter("bookshop");
+
+        Select select = new Select();
+
+        select.from("users u");
+
+        select.column(new Expresion("count(if(u.countryId > 150, 1, 0))"), "numberOfRows");
+        select.group(new Expresion[]{new Expresion("if(u.countryId > 150, 1, 0)")});
+
+        ResultSet result = adapter.fetch(select);
+
+        int count = this.count(result);
+
+        result.next();
+
+        assertEquals(2, count);
+        assertEquals(1948, result.getInt("numberOfRows"));
+
+        result.next();
+        assertEquals(52, result.getInt("numberOfRows"));
     }
 }

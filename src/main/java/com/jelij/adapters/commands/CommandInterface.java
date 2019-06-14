@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 public interface CommandInterface {
-
     /**
      * Creates a prepared command to perform.
      *
@@ -17,7 +16,7 @@ public interface CommandInterface {
      *
      * @return
      */
-    HashMap<String, Object> params();
+    HashMap<String, Object> getParams();
 
     /**
      * Set list of params.
@@ -26,13 +25,13 @@ public interface CommandInterface {
      *
      * @return
      */
-    void params(HashMap<String, Object> params);
+    void setParams(HashMap<String, Object> params);
 
     /**
-     * Set param.
+     * Set value of param at command.
      *
      * @param name
      * @param value
      */
-    void param(String name, Object value);
+    void setParam(String name, Object value);
 }

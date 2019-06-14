@@ -1,18 +1,44 @@
 package com.jelij.adapters.commands;
 
+import com.jelij.adapters.AdapterInterface;
+
 import java.util.HashMap;
 
 /**
  * Simple implementation for command. Each command should extends from that implementation.
  */
 public abstract class Command implements CommandInterface {
+
+    /**
+     * Adapter associated with command.
+     */
+    AdapterInterface _adapter;
+
+    /**
+     * Params associated with command.
+     */
     HashMap<String, Object> _params;
+
+    /**
+     * ID counter for generating unique id.
+     */
     static int _id = 0;
+
+    // Command() {};
+
+    // /**
+    //  * Contructor with adapter.
+    //  *
+    //  * @param adapter
+    //  */
+    // Command(AdapterInterface adapter) {
+    //     _adapter = adapter;
+    // }
 
     /**
      * {@inheritDoc}
      */
-    public HashMap<String, Object> params() {
+    public HashMap<String, Object> getParams() {
         return _params;
     }
 
@@ -36,14 +62,22 @@ public abstract class Command implements CommandInterface {
     /**
      * {@inheritDoc}
      */
-    public void params(HashMap<String, Object> params) {
+    public void setParams(HashMap<String, Object> params) {
         _params = params;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void param(String name, Object value) {
+    public void setParam(String name, Object value) {
         _params.put(name, value);
     }
+
+    // ResultSet fetch(Command command) throws Exception {
+    //     if (this._adapter != null) {
+    //         return this._adapter.fetch(this);
+    //     } else {
+    //         throw new Exception("There is no adapter set for command.");
+    //     }
+    // }
 }

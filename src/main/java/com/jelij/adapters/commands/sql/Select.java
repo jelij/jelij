@@ -17,6 +17,7 @@ public class Select extends Command implements WhereDelegatorInterface<Select> {
     private Integer _limit;
     private Integer _offset;
     private String[] _sort;
+    private Object[] _group;
     private ArrayList<HashMap<String, Object>> _columns = new ArrayList<>();
 
     private Where _where = new Where();
@@ -40,6 +41,17 @@ public class Select extends Command implements WhereDelegatorInterface<Select> {
     }
 
     public Select column(String value, String alias) {
+        HashMap<String, Object> column = new HashMap<>();
+
+        column.put("value", value);
+        column.put("alias", alias);
+
+        _columns.add(column);
+
+        return this;
+    }
+
+    public Select column(Expresion value, String alias) {
         HashMap<String, Object> column = new HashMap<>();
 
         column.put("value", value);
@@ -130,11 +142,11 @@ public class Select extends Command implements WhereDelegatorInterface<Select> {
                 if (column.get("value") instanceof String) {
                     value = (String) column.get("value");
                 } else if (column.get("value") instanceof CommandInterface) {
-                    Built valueBuilt = ((CommandInterface) column.get("value")).build();
+                    Built b = ((CommandInterface) column.get("value")).build();
 
-                    value = "(" + valueBuilt.getCommand() + ")";
+                    value = "(" + b.getCommand() + ")";
 
-                    built.setParams(valueBuilt.getParams());
+                    built.putParams(b.getParams());
                 }
 
                 command += "\n" + value;
@@ -147,7 +159,6 @@ public class Select extends Command implements WhereDelegatorInterface<Select> {
             }
 
             command = command.substring(0, command.length() -1);
-
         } else {
             command += "\n*";
         }
@@ -173,7 +184,7 @@ public class Select extends Command implements WhereDelegatorInterface<Select> {
 
                     with = "(" + withBuild.getCommand() + ")";
 
-                    built.setParams(withBuild.getParams());
+                    built.putParams(withBuild.getParams());
                 }
 
                 if (join.get("on") instanceof String) {
@@ -183,7 +194,7 @@ public class Select extends Command implements WhereDelegatorInterface<Select> {
 
                     on = "(" + onBuild.getCommand() + ")";
 
-                    built.setParams(onBuild.getParams());
+                    built.putParams(onBuild.getParams());
                 }
 
                 command += "\n" + type + " join " + with + " on " + on;
@@ -197,8 +208,26 @@ public class Select extends Command implements WhereDelegatorInterface<Select> {
             command += "\nWHERE " + whereBuild.getCommand();
 
             // Move params
+            built.putParams(whereBuild.getParams());
+        }
 
-            built.setParams(whereBuild.getParams());
+        // Group
+        if (_group != null && _group.length > 0) {
+            command += "\nGROUP BY ";
+
+            for(Object g: _group) {
+                if (g instanceof CommandInterface) {
+                    Built b = ((CommandInterface) g).build();
+
+                    command += "(" + b.getCommand() + ")" + ",";
+
+                    built.putParams(b.getParams());
+                } else {
+                    command += g + ",";
+                }
+            }
+
+            command = command.substring(0, command.length() - 1);
         }
 
         // Order
@@ -449,8 +478,19 @@ public class Select extends Command implements WhereDelegatorInterface<Select> {
         return this;
     }
 
+    public Select group(String[] group) {
+        _group = group;
+
+        return this;
+    }
+
+    public Select group(CommandInterface[] group) {
+        _group = group;
+
+        return this;
+    }
+
     // public function page($page, $pageSize = null)
-    // public function group($group)
     // public function having($having)
     // public function order($order)
     // public function _sort($_sort)

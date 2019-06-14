@@ -454,7 +454,6 @@ public class Where extends Command {
                 operator = "";
             }
 
-            System.out.println("operator:" + operator);
 
             if (condition.get("field") instanceof String) {
                 field = (String) condition.get("field");
@@ -488,7 +487,7 @@ public class Where extends Command {
 
                 value = valueBuilt.getCommand();
 
-                built.setParams(valueBuilt.getParams());
+                built.putParams(valueBuilt.getParams());
             } else if (condition.get("value") instanceof Where[]) {
                 String t = "";
                 String o = null;
@@ -504,14 +503,11 @@ public class Where extends Command {
 
                     t += "(" + whereBuilt.getCommand() + ") " + o + " ";
 
-                    built.setParams(whereBuilt.getParams());
+                    built.putParams(whereBuilt.getParams());
                 }
 
                 t = t.substring(0, t.length() - o.length() - 2);
 
-                System.out.println("Po usunieciu");
-                System.out.println("----------------");
-                System.out.println(t);
 
                 value = t;
             } else if (condition.get("value") instanceof String[]) {
@@ -587,8 +583,6 @@ public class Where extends Command {
 
         built.setCommand(command);
 
-        System.out.println("Po zbudowaniu");
-        System.out.println(built.command());
 
         return built;
     }

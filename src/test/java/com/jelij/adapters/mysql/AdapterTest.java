@@ -65,7 +65,6 @@ class AdapterTest extends TestCase {
         select.sort(new String[]{"id asc"});
         select.limit(1);
 
-        System.out.println(select.build().command());
         ResultSet result = adapter.fetch(select);
 
         result.next();

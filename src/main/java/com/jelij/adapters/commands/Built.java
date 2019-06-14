@@ -6,29 +6,23 @@ public class Built {
     private String _command = "";
     private HashMap<String, Object> _params = new HashMap<String, Object>();
 
-    public Built() {
-
-    }
+    public Built() {}
 
     public Built(String command) {
         _command = command;
     }
 
-    /**
-     * Return command.
-     *
-     * @return
-     */
-    public String command() {
-        if (_command.equals("")) {
+    public Built(String command, HashMap<String, Object> params) {
+        _command = command;
+        _params = params;
+    }
+
+    public String getCommand() {
+        if (_command == "") {
             return null;
         } else {
             return _command;
         }
-    }
-
-    public String getCommand() {
-        return _command;
     }
 
     public void setCommand(String command) {
@@ -39,7 +33,12 @@ public class Built {
         _params.put(name, value);
     }
 
+    public void putParams(HashMap<String, Object> params) {
+        _params.putAll(params);
+    }
+
     public void setParams(HashMap<String, Object> params) {
+        _params.clear();
         _params.putAll(params);
     }
 

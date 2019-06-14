@@ -5,11 +5,17 @@ import com.jelij.adapters.mysql.Adapter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 public class TestCase {
 
     protected AdapterInterface adapter(String name) throws SQLException, ClassNotFoundException {
-        return new Adapter("localhost", "3306", "bookshop", "root", "");
+        Adapter adapter = new Adapter("localhost", "3306", "bookshop", "root", "", new HashMap<String, Object>() {{
+            put("zeroDateTimeBehavior", "convertToNull");
+            put("noDatetimeStringSync", true);
+        }});
+
+        return adapter;
     }
 
     protected int count(ResultSet res) {

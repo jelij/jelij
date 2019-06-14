@@ -14,11 +14,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Adapter extends com.jelij.adapters.Adapter {
-    private String host;
-    private String port;
-    private String dbname;
-    private String username;
-    private String password;
+    private final String _host;
+    private final String _port;
+    private final String _dbname;
+    private final String _username;
+    private final String _password;
+    private final HashMap<String, Object> _params;
+
     private Connection connection;
 
     public Adapter(
@@ -26,23 +28,29 @@ public class Adapter extends com.jelij.adapters.Adapter {
             String port,
             String dbname,
             String username,
-            String password
+            String password,
+            HashMap<String, Object> params
     ) throws SQLException, ClassNotFoundException {
-        this.host = host;
-        this.port = port;
-        this.dbname = dbname;
-        this.username = username;
-        this.password = password;
+        _host = host;
+        _port = port;
+        _dbname = dbname;
+        _username = username;
+        _password = password;
+        _params = params;
 
-        // Class.forName("com.mysql.jdbc.Driver");
+        // Params imploded
+        String p = "";
 
-        // System.out.println("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.dbname + "?zeroDateTimeBehavior=convertToNull");
-        connection = DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.dbname + "?zeroDateTimeBehavior=convertToNull&noDatetimeStringSync=true", this.username, this.password);
-        // useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+        for(String key: params.keySet()) {
+            p += key + "=" + params.get(key) + "&";
+        }
 
-        // here sonoo is database name, root is username and password
+        if (p.length() > 0) {
+            p = p.substring(0, p.length() - 1);
+            p = "?" + p;
+        }
 
-        // Statement stmt=con.createStatement();
+        connection = DriverManager.getConnection("jdbc:mysql://" + _host + ":" + _port + "/" + _dbname + p, _username, _password);
 
         connection.createStatement().execute("SET sql_mode = 'NO_ZERO_DATE'");
     }
@@ -51,7 +59,6 @@ public class Adapter extends com.jelij.adapters.Adapter {
         if (command instanceof Select) {
             Built built = ((Select) command).build();
 
-            System.out.println(String.valueOf(built.getParams()));
 
             return this.fetch(built.getCommand(), built.getParams());
         }
@@ -64,21 +71,17 @@ public class Adapter extends com.jelij.adapters.Adapter {
     }
 
     public ResultSet fetch(String command, HashMap<String, Object> params) throws SQLException {
-
         // Params and placesholer.
         Pattern pattern = Pattern.compile("(:(\\w*))");
         Matcher match = pattern.matcher(command);
 
         ArrayList<String> placehoders = new ArrayList<>();
 
+        System.out.println("command");
         System.out.println(command);
-        System.out.println("------------------");
 
         while(match.find()) {
             String name = match.group(2);
-
-            System.out.println(name);
-            System.out.println("------------------");
 
             if (params.containsKey(name)) {
                 // Params is defined
@@ -94,10 +97,6 @@ public class Adapter extends com.jelij.adapters.Adapter {
             }
         }
 
-        System.out.println("Przed wykonanie");
-        System.out.println(command);
-        System.out.println(String.valueOf(placehoders));
-        System.out.println("-----------------------");
 
         // Prepare statement.
         PreparedStatement statement = connection.prepareStatement(command);
